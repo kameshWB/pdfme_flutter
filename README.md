@@ -56,7 +56,7 @@ You do **not** rewrite pdfme in Dart. You do **not** open a browser for the user
 
 ```yaml
 dependencies:
-  pdfme_flutter: ^0.1.0
+  pdfme_flutter: ^0.1.1
 ```
 
 ```bash
