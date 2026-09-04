@@ -2,7 +2,7 @@ name: pdfme_flutter
 description: >
   Generate PDFs on-device from pdfme Designer templates.
   Pass template JSON and inputs, get PDF bytes — no server required.
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/kameshWB/pdfme_flutter
 repository: https://github.com/kameshWB/pdfme_flutter
 issue_tracker: https://github.com/kameshWB/pdfme_flutter/issues
