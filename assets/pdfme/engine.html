@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>pdfme-mobile-engine</title>
+  </head>
+  <body>
+    <!-- Offscreen host page for the bundled pdfme engine. Never shown to users. -->
+    <script src="engine.js"></script>
+    <script>
+      // Signal readiness to the native bridge.
+      (function () {
+        function notifyReady() {
+          try {
+            if (window.PdfmeBridge && typeof window.PdfmeBridge.onReady === 'function') {
+              window.PdfmeBridge.onReady();
+            }
+          } catch (e) {
+            // ignore
+          }
+          try {
+            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.PdfmeBridge) {
+              window.webkit.messageHandlers.PdfmeBridge.postMessage({ type: 'ready' });
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+        if (globalThis.PdfmeMobile) {
+          notifyReady();
+        } else {
+          document.addEventListener('DOMContentLoaded', notifyReady);
+        }
+      })();
+    </script>
+  </body>
+</html>

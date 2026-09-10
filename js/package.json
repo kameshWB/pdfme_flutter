@@ -1,0 +1,19 @@
+{
+  "name": "pdfme-flutter-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bundled pdfme generator for the Flutter pdfme_flutter plugin",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@pdfme/common": "6.1.12",
+    "@pdfme/generator": "6.1.12",
+    "@pdfme/schemas": "6.1.12"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
