@@ -32,7 +32,7 @@ pdfme’s generator (`@pdfme/generator`) is a **JavaScript** library. Flutter ca
 
 ```
 Your Flutter app
-    │  PdfmeGenerator.generate(template, inputs)
+    │  PdfmeGenerator.generate(template, inputs, options?)
     ▼
 MethodChannel
     ▼
@@ -56,7 +56,7 @@ You do **not** rewrite pdfme in Dart. You do **not** open a browser for the user
 
 ```yaml
 dependencies:
-  pdfme_flutter: ^0.1.1
+  pdfme_flutter: ^0.1.2
 ```
 
 ```bash
@@ -114,6 +114,34 @@ await File('invoice.pdf').writeAsBytes(pdf);
 
 Only **editable** fields need values in `inputs`. Read-only labels from the Designer stay in the template.
 
+### Custom fonts
+
+Pass pdfme `options.font` through `generate`. Embed font bytes as `data:` URIs — the engine cannot download remote font files.
+
+```dart
+import 'dart:convert';
+import 'package:flutter/services.dart';
+
+final font = await rootBundle.load('assets/fonts/NotoSans-Regular.ttf');
+final fontUri =
+    'data:font/ttf;base64,${base64Encode(font.buffer.asUint8List())}';
+
+final pdf = await PdfmeGenerator.generate(
+  template: template,
+  inputs: inputs,
+  options: {
+    'font': {
+      'NotoSans': {
+        'data': fontUri,
+        'fallback': true,
+      },
+    },
+  },
+);
+```
+
+Use the same font family names in the Designer template (`fontName`) as keys in `options.font`.
+
 ### Errors
 
 Failures throw `PdfmeException` with a `message` and optional `code` (for example `INVALID_INPUT`, `GENERATION_ERROR`).
@@ -124,7 +152,7 @@ Failures throw `PdfmeException` with a `message` and optional `code` (for exampl
 
 - Prefer **`data:` URIs** for images/signatures (not `https://` URLs). Remote URLs are rejected so generation stays offline.
 - `basePdf` should be a blank-pdf object or embedded `data:application/pdf;base64,...`, not a remote URL.
-- Custom fonts can be embedded via pdfme’s usual `options.font` mechanism when you extend the API later; the bundled engine includes pdfme’s default font path for basic text.
+- Custom fonts go in `options.font` as `data:font/ttf;base64,...` (or otf/woff) values. The engine decodes those URIs to bytes because `fetch` is disabled. Without `options.font`, pdfme’s bundled default font is used.
 
 ---
 

@@ -3,7 +3,7 @@ description: Minimal demo for pdfme_flutter.
 publish_to: 'none'
 
 environment:
-  sdk: ^3.13.2
+  sdk: '>=3.6.2 <4.0.0'
 
 dependencies:
   flutter:

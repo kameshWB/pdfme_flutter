@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.1.2
+
+- Pass optional `options` through `PdfmeGenerator.generate` to `@pdfme/generator`.
+- Decode custom font `data:` URIs in the bundled engine so external fonts work offline.
+
 ## 0.1.1
 
 - Re-publish so pub.dev can re-check public GitHub homepage/repository links.

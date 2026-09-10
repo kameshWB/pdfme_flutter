@@ -41,3 +41,9 @@ test('bundled engine.js includes PdfmeMobile', () => {
   assert.ok(src.includes('PdfmeMobile'));
   assert.ok(src.length > 100_000);
 });
+
+test('engine source hydrates font data URIs', () => {
+  const src = readFileSync(join(__dirname, '..', 'src', 'engine.js'), 'utf8');
+  assert.ok(src.includes('function hydrateFontOptions'));
+  assert.ok(src.includes('function dataUriToUint8Array'));
+});

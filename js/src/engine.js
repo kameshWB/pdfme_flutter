@@ -112,6 +112,39 @@ function isRemoteUrl(value) {
   return typeof value === 'string' && /^(https?:)?\/\//i.test(value.trim());
 }
 
+function dataUriToUint8Array(value) {
+  if (typeof value !== 'string') return value;
+  const comma = value.indexOf(',');
+  if (!value.startsWith('data:') || comma < 0) return value;
+  const meta = value.slice(0, comma);
+  const payload = value.slice(comma + 1);
+  const binary = /;base64/i.test(meta) ? atob(payload) : decodeURIComponent(payload);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+/**
+ * pdfme expects font.data as ArrayBuffer/Uint8Array. JSON can only carry
+ * data: URIs, and fetch() is stubbed in this runtime, so decode here.
+ */
+function hydrateFontOptions(options) {
+  if (!options || typeof options !== 'object' || !options.font || typeof options.font !== 'object') {
+    return options;
+  }
+  const font = {};
+  for (const [name, spec] of Object.entries(options.font)) {
+    if (!spec || typeof spec !== 'object') {
+      font[name] = spec;
+      continue;
+    }
+    font[name] = { ...spec, data: dataUriToUint8Array(spec.data) };
+  }
+  return { ...options, font };
+}
+
 function assertOfflinePayload(template, inputs) {
   const basePdf = template.basePdf;
   if (isRemoteUrl(basePdf)) {
@@ -205,7 +238,8 @@ async function generatePdf(payload) {
       };
     }
 
-    const { template, inputs, options = {}, plugins: extraPlugins } = payload;
+    const { template, inputs, plugins: extraPlugins } = payload;
+    const options = hydrateFontOptions(payload.options || {});
 
     if (!template || typeof template !== 'object') {
       return {

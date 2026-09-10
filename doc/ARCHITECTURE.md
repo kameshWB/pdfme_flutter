@@ -1,7 +1,7 @@
 # Architecture (internal)
 
 ```
-PdfmeGenerator.generate(template, inputs)
+PdfmeGenerator.generate(template, inputs, options?)
   → MethodChannel
   → Android WebView / iOS WKWebView (offscreen, network blocked)
   → bundled @pdfme/generator
