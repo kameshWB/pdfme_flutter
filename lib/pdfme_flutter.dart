@@ -24,11 +24,14 @@ class PdfmeGenerator {
   ///
   /// [template] is the JSON map exported from the pdfme Designer
   /// (`basePdf` + `schemas`). [inputs] is a non-empty list of field values.
+  /// [options] is passed through to `@pdfme/generator` (for example `font`).
+  /// Font `data` values should be `data:font/ttf;base64,...` URIs.
   ///
   /// Returns PDF bytes.
   static Future<Uint8List> generate({
     required Map<String, dynamic> template,
     required List<Map<String, dynamic>> inputs,
+    Map<String, dynamic>? options,
   }) async {
     if (inputs.isEmpty) {
       throw const PdfmeException(
@@ -43,16 +46,16 @@ class PdfmeGenerator {
       final result = await _channel.invokeMethod<dynamic>('generate', {
         'templateJson': jsonEncode(template),
         'inputsJson': jsonEncode(inputs),
-        'optionsJson': '{}',
+        'optionsJson': jsonEncode(options ?? <String, dynamic>{}),
       });
 
       final bytes = switch (result) {
         final Uint8List b => b,
         final List<int> list => Uint8List.fromList(list),
         _ => throw const PdfmeException(
-            'Native bridge returned unexpected PDF payload',
-            code: 'GENERATION_ERROR',
-          ),
+          'Native bridge returned unexpected PDF payload',
+          code: 'GENERATION_ERROR',
+        ),
       };
 
       if (bytes.length < 5 ||
